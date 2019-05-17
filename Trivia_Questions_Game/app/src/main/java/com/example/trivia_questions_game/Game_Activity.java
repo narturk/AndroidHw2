@@ -3,6 +3,7 @@ package com.example.trivia_questions_game;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -81,8 +82,11 @@ public class Game_Activity extends AppCompatActivity {
                 }
                 else {
                     radioButton = findViewById(selectedId);
-                    if (question_num >= 9)
-                        question_num = 9;
+                    if (question_num >= 9){
+                        gameOver();
+                        return;
+                    }
+
                     if(radioButton.getText().equals(questions.getQuestion(question_num).getCorrectAnswer())){
                         Toast.makeText(Game_Activity.this, "Correct",Toast.LENGTH_SHORT).show();
                         score = score + 10;
@@ -111,16 +115,23 @@ public class Game_Activity extends AppCompatActivity {
     }
 
     private void gameOver() {
-        new AlertDialog.Builder(this)
+        final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Game Over")
                 .setMessage("Your Score is: " + String.valueOf(score))
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Game_Activity.this, MainActivity.class);
                         startActivity(intent);
                     }
-                })
-                .show();
+                }).create();
+        dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+            }
+        });
+
+        dialog.show();
     }
 
     @Override
